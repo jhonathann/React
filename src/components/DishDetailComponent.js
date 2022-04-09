@@ -21,12 +21,11 @@ import { Control, LocalForm, Errors } from "react-redux-form";
 const required = (val) => val && val.length;
 const maxLength = (len) => (val) => !val || val.length <= len;
 const minLength = (len) => (val) => val && val.length >= len;
-function CommentForm() {
+function CommentForm({ dishId, addComment }) {
   const [isModalOpen, setModal] = useState(false);
   const toggleModal = () => setModal(!isModalOpen);
   const handleSubmit = (values) => {
-    console.log("Current State is: " + JSON.stringify(values));
-    alert("Current State is: " + JSON.stringify(values));
+    addComment(dishId, values.rating, values.author, values.comment);
   };
   return (
     <div>
@@ -126,7 +125,7 @@ function RenderDish({ dish }) {
     return <div></div>;
   }
 }
-function RenderComments({ comments }) {
+function RenderComments({ comments, addComment, dishId }) {
   if (comments != null) {
     const commentary = comments.map((element) => {
       return (
@@ -146,7 +145,7 @@ function RenderComments({ comments }) {
     return (
       <div>
         {commentary}
-        <CommentForm></CommentForm>
+        <CommentForm dishId={dishId} addComment={addComment} />
       </div>
     );
   } else {
@@ -179,7 +178,11 @@ const DishDetail = (props) => {
           <div className="col-12 col-md-5 m-1">
             <h4>Comments</h4>
             <ul className="list-unstyled">
-              <RenderComments comments={props.comments} />
+              <RenderComments
+                comments={props.comments}
+                addComment={props.addComment}
+                dishId={props.dish.id}
+              />
             </ul>
           </div>
         </div>
